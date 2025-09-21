@@ -5,9 +5,30 @@ import MagicalCards from "../components/MagicalCards";
 import HowItWorks from "../components/HowItWorks";
 import PricingSection from "./PricingSection";
 import Tesimonials from "../components/Tesimonials";
+import { useImageGeneration } from "../hooks/useImageGeneration";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Home() {
+  const [prompt, setPrompt] = useState("");
+  const { generateImage, isGenerating, generationError, clearError } = useImageGeneration();
+  const navigate = useNavigate();
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) return;
+
+    const result = await generateImage(prompt);
+    if (result.success) {
+      navigate("/result");
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !isGenerating) {
+      handleGenerate();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-outerBlue p-6 relative">
       {/* Magical floating cards background */}
@@ -33,12 +54,45 @@ export default function Home() {
             <input
               type="text"
               placeholder="Enter your prompt"
+              value={prompt}
+              onChange={(e) => {
+                setPrompt(e.target.value);
+                if (generationError) clearError();
+              }}
+              onKeyPress={handleKeyPress}
               className="w-full p-3 pr-24 rounded-lg border-2 border-blue-300 shadow-[4px_4px_8px_rgba(0,0,255,0.3)] focus:outline-none focus:ring-2 focus:ring-blue-500 transition-transform hover:scale-[1.02]"
+              disabled={isGenerating}
             />
-            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-200">
-              Generate
+            <button
+              onClick={handleGenerate}
+              disabled={isGenerating || !prompt.trim()}
+              className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-2 rounded-lg transition duration-200 ${
+                isGenerating || !prompt.trim()
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-blue-500 text-white hover:bg-blue-600'
+              }`}
+            >
+              {isGenerating ? (
+                <div className="flex items-center space-x-2">
+                  <div className="loading-dots">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                  </div>
+                  <span>Generating...</span>
+                </div>
+              ) : (
+                'Generate'
+              )}
             </button>
           </div>
+
+          {generationError && (
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg max-w-md">
+              {generationError}
+            </div>
+          )}
         </section>
 
         {/* Features & Why Choose Us Section */}
@@ -98,7 +152,7 @@ export default function Home() {
  <section id="magical-cards" className="w-full">
           <MagicalCards />
         </section>
-        
+
         {/* Pricing Section */}<section id="pricing-section" className="w-full mt-16">
           <PricingSection />
         </section>
@@ -122,9 +176,9 @@ export default function Home() {
       {/* Testimonial 1 */}
       <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 transform hover:-translate-y-2 transition-transform">
         <div className="flex items-center mb-6">
-          <img 
-            src="https://randomuser.me/api/portraits/women/44.jpg" 
-            alt="Sarah Johnson" 
+          <img
+            src="https://randomuser.me/api/portraits/women/44.jpg"
+            alt="Sarah Johnson"
             className="w-12 h-12 rounded-full object-cover border-2 border-purple-200"
           />
           <div className="ml-4">
@@ -147,9 +201,9 @@ export default function Home() {
       {/* Testimonial 2 */}
       <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 transform hover:-translate-y-2 transition-transform">
         <div className="flex items-center mb-6">
-          <img 
-            src="https://randomuser.me/api/portraits/men/32.jpg" 
-            alt="Michael Chen" 
+          <img
+            src="https://randomuser.me/api/portraits/men/32.jpg"
+            alt="Michael Chen"
             className="w-12 h-12 rounded-full object-cover border-2 border-purple-200"
           />
           <div className="ml-4">
@@ -172,9 +226,9 @@ export default function Home() {
       {/* Testimonial 3 */}
       <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 transform hover:-translate-y-2 transition-transform">
         <div className="flex items-center mb-6">
-          <img 
-            src="https://randomuser.me/api/portraits/women/68.jpg" 
-            alt="Emma Rodriguez" 
+          <img
+            src="https://randomuser.me/api/portraits/women/68.jpg"
+            alt="Emma Rodriguez"
             className="w-12 h-12 rounded-full object-cover border-2 border-purple-200"
           />
           <div className="ml-4">
@@ -198,20 +252,18 @@ export default function Home() {
       </div>
     </div>
 
-    
-        
-      
-    
+
+
   </div>
 </section>
-        
+
         {/* How It Works Section */}
         <section className="w-full mt-16">
           <HowItWorks />
         </section>
 
-      
-      
+
+
     </div>
   );
 }

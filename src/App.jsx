@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "./components/Header";
 import Footer from "./components/footer";
 import Home from "./pages/Home";
 import PricingSection from "./pages/PricingSection";
@@ -10,7 +9,6 @@ import Result from "./pages/Result";
 export default function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home />} />

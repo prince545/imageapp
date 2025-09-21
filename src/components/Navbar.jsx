@@ -4,18 +4,11 @@ import { Link } from "react-router-dom";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const navItems = [
-    { name: "Home", href: "#home", action: () => scrollToSection('home') },
-    { name: "Pricing", href: "#pricing", action: () => scrollToSection('pricing-section') },
-    { name: "Gallery", href: "#gallery", action: () => scrollToSection('magical-cards') },
-    { name: "Studio", href: "#" },
+    { name: "Home", href: "/", type: "route" },
+    { name: "Pricing", href: "/pricing", type: "route" },
+    { name: "Buy Credits", href: "/buy", type: "route" },
+    { name: "Result", href: "/result", type: "route" },
   ];
 
   return (
@@ -39,27 +32,26 @@ export default function Navbar() {
         {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.href}
-              onClick={(e) => {
-                e.preventDefault();
-                item.action();
-              }}
+              to={item.href}
               className="relative text-gray-700 font-medium hover:text-blue-600 transition-all duration-300 group cursor-pointer"
             >
               <span className="relative z-10">{item.name}</span>
               <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-300"></div>
-            </a>
+            </Link>
           ))}
         </div>
 
         {/* Sign Up Button */}
         <div className="hidden md:block">
-          <button className="relative overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-2.5 px-6 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 group">
-            <span className="relative z-10">Sign Up</span>
+          <Link
+            to="/buy"
+            className="relative overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-2.5 px-6 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 group"
+          >
+            <span className="relative z-10">Get Credits</span>
             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-          </button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -77,17 +69,22 @@ export default function Navbar() {
       {isMenuOpen && (
         <div className="md:hidden mt-4 space-y-3 animate-slide-up">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.href}
+              to={item.href}
               className="block text-gray-700 font-medium hover:text-blue-600 transition-colors duration-300"
+              onClick={() => setIsMenuOpen(false)}
             >
               {item.name}
-            </a>
+            </Link>
           ))}
-          <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-2.5 px-6 rounded-full shadow-lg">
-            Sign Up
-          </button>
+          <Link
+            to="/buy"
+            className="block w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-2.5 px-6 rounded-full shadow-lg text-center"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Get Credits
+          </Link>
         </div>
       )}
     </nav>
